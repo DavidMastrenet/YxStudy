@@ -111,6 +111,11 @@
                 return;
             }
 
+            if (gradeLevel < 1 || gradeLevel > 4 || !Number.isInteger(gradeLevel)) {
+                resultElement.textContent = "请输入有效的等级。";
+                return;
+            }
+
             if (lowestScore < examScore && examScore < highestScore) {
                 const scoreMap = { 1: { d: 100, f: 86 }, 2: { d: 85, f: 71 }, 3: { d: 70, f: 56 }, 4: { d: 55, f: 41 } };
                 const scoreD = scoreMap[gradeLevel].d;
