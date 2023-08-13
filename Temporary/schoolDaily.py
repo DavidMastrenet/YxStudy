@@ -53,7 +53,7 @@ def get_comp_notice(num_of_notice):
             break
 
 
-def cas_login():
+def cas_login(method, rsa_key):
     global session
     session = requests.Session()
     login_url = "https://cas.shnu.edu.cn/cas/login?service=http%3A%2F%2Fcourse.shnu.edu.cn%2Feams%2Flogin.action"
@@ -62,13 +62,16 @@ def cas_login():
     }
     response = session.get(login_url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
-    lt_value = soup.find("input", {"id": "lt"})["value"]
-    print("请将lt数据复制到网页中获取RSA（已复制到剪切板），并粘贴RSA数据：")
-    pyperclip.copy(lt_value)
-    current_directory = os.getcwd()
-    get_key = os.path.join(current_directory, 'getKey.html')
-    webbrowser.open('file://' + get_key)
-    rsa = input("RSA: ")
+    if method == 1:
+        lt_value = soup.find("input", {"id": "lt"})["value"]
+        print("请将lt数据复制到网页中获取RSA（已复制到剪切板），并粘贴RSA数据：")
+        pyperclip.copy(lt_value)
+        current_directory = os.getcwd()
+        get_key = os.path.join(current_directory, 'getKey.html')
+        webbrowser.open('file://' + get_key)
+        rsa = input("RSA: ")
+    else:
+        rsa = rsa_key
     data = {
         "rsa": rsa,  # 你的RSA
         "ul": "10",
@@ -148,7 +151,7 @@ def get_course_info():
         print(f"{list_id}.\t{course_name} \n\t{info}")
 
 
-cas_login()
+cas_login(1, None)
 get_current_day()
 get_jwc_notice(5)
 get_comp_notice(5)
