@@ -2,6 +2,69 @@
 <html>
 <head>
     <title>RSA生成</title>
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 50%;
+            padding: 8px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #encryptedResult {
+            max-height: 100px; /* 设置最大高度 */
+            overflow-y: auto; /* 出现滚动条 */
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: center;
+            white-space: pre-wrap;
+        }
+    </style>
 </head>
 <body>
     <script>
@@ -861,17 +924,19 @@
              return keys;
             }
     </script>
-    <h1>(临时使用)RSA生成</h1>
-    <form id="encryptionForm">
-        <label for="username">账号:</label>
-        <input type="text" id="username" name="username" required><br><br>
-        <label for="password">密码:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <label for="lt">LT:</label>
-        <input type="text" id="lt" name="lt" required><br><br>
-        <button type="button" onclick="encryptData()">加密</button>
-    </form>
-    <p id="encryptedResult"></p>
+    <div class="container">
+        <h1>(临时使用)RSA生成</h1>
+        <form id="encryptionForm">
+            <label for="username">账号:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">密码:</label>
+            <input type="password" id="password" name="password" required>
+            <label for="lt">LT:</label>
+            <input type="text" id="lt" name="lt" required>
+            <button type="button" onclick="encryptData()">加密</button>
+        </form>
+        <p id="encryptedResult"></p>
+    </div>
 
     <script>
         function encryptData() {
