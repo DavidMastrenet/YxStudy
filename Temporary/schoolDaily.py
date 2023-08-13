@@ -1,6 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+import time
+import re
 
 
 def get_current_day():
@@ -72,7 +74,7 @@ def cas_login():
         "referer": login_url,
     }
 
-    post_response = session.post(login_url, data=data, headers=post_headers)
+    session.post(login_url, data=data, headers=post_headers)
 
     eams_url = "http://course.shnu.edu.cn/eams/login.action"
     eams_headers = {
@@ -82,8 +84,6 @@ def cas_login():
         "pragma": "no-cache",
     }
     session.get(eams_url, headers=eams_headers)
-    global cas_login_done
-    cas_login_done = True
 
 
 def get_course_info():
@@ -115,28 +115,28 @@ def get_course_info():
         "lesson.coursePeriod": "",
         "lesson.project.id": "1",
         "lesson.semester.id": "342",
-        "_": "1691897459074",
+        "_": time.time(),
     }
 
     search_response = session.post(search_url, data=search_data, headers=search_headers)
 
-    if search_response.status_code == 200:
-        soup = BeautifulSoup(search_response.text, "html.parser")
-        course_info = {}
-        tbody = soup.find("tbody", id="grid665029811_data")
-        if tbody:
-            print("本学期公共课：")
-            for row in tbody.find_all("tr"):
-                cols = row.find_all("td")
-                course_id = cols[1].text.strip()
-                course_name = cols[2].find("a").text.strip()
-                teacher = cols[5].text.strip()
-                schedule = cols[10].text.strip()
-                course_info[course_id] = f"{course_name} - {teacher} - {schedule}"
-            for course_id, info in course_info.items():
-                print(f"课程编号：{course_id}, 课程信息：{info}")
-    else:
-        print("课程搜索失败")
+    pattern_contents1 = r"contents\['(\d+)'\]='([^']*)'"
+    pattern_contents2 = r"<td class=\"gridselect\"><input class=\"box\" name=\"lesson.id\" value=\"(\d+)\" type=\"checkbox\"/></td><td>[\s\S]*?<a href=\"/eams/stdSyllabus!info.action\?lesson.id=\d+\"[^>]*?>([^<]*)</a>"
+    contents1_data = re.findall(pattern_contents1, search_response.text)
+    contents2_data = re.findall(pattern_contents2, search_response.text)
+
+    course_info = {course_id: info.strip() for course_id, info in contents1_data}
+
+    course_names = {course_id: course_name for course_id, course_name in contents2_data}
+
+    list_id = 0
+
+    print("公共课程：")
+    for course_id, info in course_info.items():
+        list_id += 1
+        course_name = course_names.get(course_id)
+        info = info.replace('<br>', '')
+        print(f"{list_id}.\t{course_name} \n\t{info}")
 
 
 get_current_day()
