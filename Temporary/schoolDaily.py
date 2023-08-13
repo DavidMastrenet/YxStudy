@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import time
 import re
+import os
+import webbrowser
+import pyperclip
 
 
 def get_current_day():
@@ -60,8 +63,11 @@ def cas_login():
     response = session.get(login_url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
     lt_value = soup.find("input", {"id": "lt"})["value"]
-    print("请将lt数据复制到网页中获取RSA，并粘贴RSA数据：")
-    print(lt_value)
+    print("请将lt数据复制到网页中获取RSA（已复制到剪切板），并粘贴RSA数据：")
+    pyperclip.copy(lt_value)
+    current_directory = os.getcwd()
+    get_key = os.path.join(current_directory, 'getKey.html')
+    webbrowser.open('file://' + get_key)
     rsa = input("RSA: ")
     data = {
         "rsa": rsa,  # 你的RSA
@@ -142,8 +148,8 @@ def get_course_info():
         print(f"{list_id}.\t{course_name} \n\t{info}")
 
 
+cas_login()
 get_current_day()
 get_jwc_notice(5)
 get_comp_notice(5)
-cas_login()
 get_course_info()
