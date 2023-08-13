@@ -60,8 +60,11 @@ def cas_login():
     response = session.get(login_url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
     lt_value = soup.find("input", {"id": "lt"})["value"]
+    print("请将lt数据复制到网页中获取RSA，并粘贴RSA数据：")
+    print(lt_value)
+    rsa = input("RSA: ")
     data = {
-        "rsa": "",  # 你的RSA
+        "rsa": rsa,  # 你的RSA
         "ul": "10",
         "pl": "15",
         "lt": lt_value,
