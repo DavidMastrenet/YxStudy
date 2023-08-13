@@ -9,7 +9,7 @@ def get_current_day():
     print("今天是", today, "星期", "一二三四五六日"[day_week])
 
 
-def get_notice():
+def get_notice(num_of_notice):
     url = "https://jwc.shnu.edu.cn/"
     response = requests.get(url)
     content = response.text
@@ -28,9 +28,9 @@ def get_notice():
             processed_titles.add(title)
             list_id += 1
             print(f"{list_id}. [{date}] {title}")
-        if list_id >= 5:
+        if list_id >= num_of_notice:
             break
 
 
 get_current_day()
-get_notice()
+get_notice(5)
