@@ -5,7 +5,7 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 
-from des_util import raw_str_enc
+from schoolDaily_des_util import raw_str_enc
 
 session = requests.session()
 session.headers = {
