@@ -1,11 +1,17 @@
+import re
+import time
+from datetime import datetime
+
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime
-import time
-import re
-import os
-import webbrowser
-import pyperclip
+
+from des_util import raw_str_enc
+
+session = requests.session()
+session.headers = {
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+                  "Chrome/91.0.4472.124 Safari/537.36",
+}
 
 
 def get_current_day():
@@ -53,49 +59,35 @@ def get_comp_notice(num_of_notice):
             break
 
 
-def cas_login(method, rsa_key):
-    global session
-    session = requests.Session()
+def cas_login(username, password):
     login_url = "https://cas.shnu.edu.cn/cas/login?service=http%3A%2F%2Fcourse.shnu.edu.cn%2Feams%2Flogin.action"
-    headers = {
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-    }
-    response = session.get(login_url, headers=headers)
+    response = session.get(login_url)
     soup = BeautifulSoup(response.text, "html.parser")
-    if method == 1:
-        lt_value = soup.find("input", {"id": "lt"})["value"]
-        print("请将lt数据复制到网页中获取RSA（已复制到剪切板），并粘贴RSA数据：")
-        pyperclip.copy(lt_value)
-        current_directory = os.getcwd()
-        get_key = os.path.join(current_directory, 'getKey.html')
-        webbrowser.open('file://' + get_key)
-        rsa = input("RSA: ")
-    else:
-        rsa = rsa_key
+    lt_value = soup.find("input", {"id": "lt"})["value"]
     data = {
-        "rsa": rsa,  # 你的RSA
-        "ul": "10",
-        "pl": "15",
+        "rsa": raw_str_enc(username + password + lt_value),
+        "ul": len(username),
+        "pl": len(password),
         "lt": lt_value,
-        "execution": "e1s1",
+        "execution": soup.find("input", {"name": "execution"})["value"],
         "_eventId": "submit",
     }
     post_headers = {
         "content-type": "application/x-www-form-urlencoded",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
         "referer": login_url,
     }
-
     session.post(login_url, data=data, headers=post_headers)
 
     eams_url = "http://course.shnu.edu.cn/eams/login.action"
     eams_headers = {
-        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,"
+                  "application/signed-exchange;v=b3;q=0.7",
         "accept-language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
         "cache-control": "no-cache",
         "pragma": "no-cache",
     }
     session.get(eams_url, headers=eams_headers)
+    print(f"Logged as {username}")
 
 
 def get_course_info():
@@ -133,7 +125,9 @@ def get_course_info():
     search_response = session.post(search_url, data=search_data, headers=search_headers)
 
     pattern_contents1 = r"contents\['(\d+)'\]='([^']*)'"
-    pattern_contents2 = r"<td class=\"gridselect\"><input class=\"box\" name=\"lesson.id\" value=\"(\d+)\" type=\"checkbox\"/></td><td>[\s\S]*?<a href=\"/eams/stdSyllabus!info.action\?lesson.id=\d+\"[^>]*?>([^<]*)</a>"
+    pattern_contents2 = r"<td class=\"gridselect\"><input class=\"box\" name=\"lesson.id\" value=\"(\d+)\" " \
+                        r"type=\"checkbox\"/></td><td>[\s\S]*?<a " \
+                        r"href=\"/eams/stdSyllabus!info.action\?lesson.id=\d+\"[^>]*?>([^<]*)</a>"
     contents1_data = re.findall(pattern_contents1, search_response.text)
     contents2_data = re.findall(pattern_contents2, search_response.text)
 
@@ -151,7 +145,10 @@ def get_course_info():
         print(f"{list_id}.\t{course_name} \n\t{info}")
 
 
-cas_login(1, None)
+usr = ""
+pwd = ""
+
+cas_login(usr, pwd)
 get_current_day()
 get_jwc_notice(5)
 get_comp_notice(5)
