@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>新高考赋分转换</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 500px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .input-label {
+            flex: 1;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        p {
+            font-size: 18px;
+            margin: 20px 0 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>新高考赋分转换</h1>
+        
+        <div class="input-group">
+            <label class="input-label" for="highestScore">当前档位的最高分：</label>
+            <input class="input-field" type="number" id="highestScore">
+        </div>
+
+        <div class="input-group">
+            <label class="input-label" for="lowestScore">当前档位的最低分：</label>
+            <input class="input-field" type="number" id="lowestScore">
+        </div>
+
+        <div class="input-group">
+            <label class="input-label" for="examScore">考试成绩：</label>
+            <input class="input-field" type="number" id="examScore">
+        </div>
+
+        <div class="input-group">
+            <label class="input-label" for="gradeLevel">所在档位（1~4）：</label>
+            <input class="input-field" type="number" id="gradeLevel">
+        </div>
+
+        <button onclick="calculateExamScore()">开始转换</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        function calculateExamScore() {
+            const highestScore = parseFloat(document.getElementById("highestScore").value);
+            const lowestScore = parseFloat(document.getElementById("lowestScore").value);
+            const examScore = parseFloat(document.getElementById("examScore").value);
+            const gradeLevel = parseFloat(document.getElementById("gradeLevel").value);
+            const resultElement = document.getElementById("result");
+
+            if (isNaN(highestScore) || isNaN(lowestScore) || isNaN(examScore) || isNaN(gradeLevel)) {
+                resultElement.textContent = "请输入有效的数字。";
+                return;
+            }
+
+            if (lowestScore < examScore && examScore < highestScore) {
+                const scoreMap = { 1: { d: 100, f: 86 }, 2: { d: 85, f: 71 }, 3: { d: 70, f: 56 }, 4: { d: 55, f: 41 } };
+                const scoreD = scoreMap[gradeLevel].d;
+                const scoreF = scoreMap[gradeLevel].f;
+                const scoreG = highestScore - examScore;
+                const scoreH = examScore - lowestScore;
+                const scoreJ = highestScore - lowestScore;
+                const finalScore = (scoreF * scoreG + scoreD * scoreH) / scoreJ;
+                resultElement.textContent = "赋分成绩为：" + finalScore.toFixed(2);
+            } else {
+                resultElement.textContent = "无效数据，换算出错。";
+            }
+        }
+    </script>
+</body>
+</html>
