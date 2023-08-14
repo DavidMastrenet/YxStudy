@@ -7,6 +7,10 @@ from bs4 import BeautifulSoup
 
 from schoolDaily_des_util import raw_str_enc
 
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
 session = requests.session()
 session.headers = {
     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -14,12 +18,14 @@ session.headers = {
 }
 
 
+@app.route('/current_day')
 def get_current_day():
     today = datetime.now().date()
     day_week = today.weekday()
-    print("今天是", today, "星期", "一二三四五六日"[day_week])
+    return f"今天是 {today} 星期 {'一二三四五六日'[day_week]}"
 
 
+@app.route('/jwc_notice/<int:num_of_notice>')
 def get_jwc_notice(num_of_notice):
     url = "https://jwc.shnu.edu.cn/"
     response = requests.get(url)
@@ -29,7 +35,7 @@ def get_jwc_notice(num_of_notice):
     title_date_rows = article_list.find_all("tr")
     processed_titles = set()
     list_id = 0
-    print("教务处学生公告：")
+    notices = []
     for row in title_date_rows:
         title_element = row.find("a", class_="Normal")
         date_element = row.find("span", class_="PublishDate")
@@ -38,25 +44,36 @@ def get_jwc_notice(num_of_notice):
         if title not in processed_titles:
             processed_titles.add(title)
             list_id += 1
-            print(f"{list_id}. [{date}] {title}")
+            notices.append({
+                "id": list_id,
+                "date": date,
+                "title": title
+            })
         if list_id >= num_of_notice:
             break
+    return jsonify(notices)
 
 
+@app.route('/comp_notice/<int:num_of_notice>')
 def get_comp_notice(num_of_notice):
     url = "http://xxjd.shnu.edu.cn/27065/list.htm"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, "html.parser")
     list_id = 0
     news_list = soup.find_all("li", class_="news")
-    print("信息与机电工程学院公告：")
+    notices = []
     for news in news_list:
         list_id += 1
         title = news.find("span", class_="news_title").find("a").text
         date = news.find("span", class_="news_meta").text
-        print(f"{list_id}. [{date}] {title}")
+        notices.append({
+            "id": list_id,
+            "date": date,
+            "title": title
+        })
         if list_id >= num_of_notice:
             break
+    return jsonify(notices)
 
 
 def cas_login(username, password):
@@ -90,6 +107,7 @@ def cas_login(username, password):
     print(f"Logged as {username}")
 
 
+@app.route('/course_info')
 def get_course_info():
     search_url = "https://course.shnu.edu.cn/eams/stdSyllabus!search.action"
     search_headers = {
@@ -137,19 +155,22 @@ def get_course_info():
 
     list_id = 0
 
-    print("公共课程：")
+    courses = []
     for course_id, info in course_info.items():
         list_id += 1
         course_name = course_names.get(course_id)
         info = info.replace('<br>', '')
-        print(f"{list_id}.\t{course_name} \n\t{info}")
+        courses.append({
+            "id": list_id,
+            "course_name": course_name,
+            "info": info
+        })
+
+    return jsonify(courses)
 
 
-usr = ""
-pwd = ""
-
-cas_login(usr, pwd)
-get_current_day()
-get_jwc_notice(5)
-get_comp_notice(5)
-get_course_info()
+if __name__ == '__main__':
+    usr = ""
+    pwd = ""
+    cas_login(usr, pwd)
+    app.run(debug=True)
