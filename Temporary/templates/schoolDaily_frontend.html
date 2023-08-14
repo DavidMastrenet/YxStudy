@@ -48,12 +48,40 @@
         td:nth-child(1) {
             text-align: center;
         }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 20px;
+        }
+
+        .tab {
+            padding: 5px 10px;
+            background-color: #f2f2f2;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            background-color: #ddd;
+        }
     </style>
 </head>
 <body>
-    <h1 id="date"></h1>
-    <h1>教务处通知</h1>
-    <table>
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" data-table="jwcTable">教务处通知</div>
+            <div class="tab" data-table="compTable">学院通知</div>
+            <div class="tab" data-table="courseTable">课程信息</div>
+        </div>
+        <div id="date"></div>
+    </div>
+    <table id="jwcTable">
         <thead>
             <tr>
                 <th>序号</th>
@@ -64,8 +92,7 @@
         <tbody id="jwcNoticeTableBody"></tbody>
     </table>
 
-    <h1>学院通知</h1>
-    <table>
+    <table id="compTable" style="display: none;">
         <thead>
             <tr>
                 <th>序号</th>
@@ -76,8 +103,7 @@
         <tbody id="compNoticeTableBody"></tbody>
     </table>
 
-    <h1>课程信息</h1>
-    <table>
+    <table id="courseTable" style="display: none;">
         <thead>
             <tr>
                 <th>序号</th>
@@ -109,6 +135,7 @@
             const noticeData = await fetchData(link, rows);
 
             if (Array.isArray(noticeData)) {
+                tableBody.innerHTML = ''; // 清空现有数据
                 noticeData.forEach((item) => {
                     const row = document.createElement("tr");
                     row.innerHTML = `
@@ -128,10 +155,11 @@
 
         async function populateCourseTable() {
             const tableBody = document.getElementById("courseTableBody");
-            const noticeData = await fetchCourseData();
+            const courseData = await fetchCourseData();
 
-            if (Array.isArray(noticeData)) {
-                noticeData.forEach((item) => {
+            if (Array.isArray(courseData)) {
+                tableBody.innerHTML = ''; // 清空现有数据
+                courseData.forEach((item) => {
                     const row = document.createElement("tr");
                     row.innerHTML = `
                         <td>${item.id}</td>
@@ -143,10 +171,33 @@
             }
         }
 
+        // 初始化加载教务处通知和课程信息
         populateTable("jwcNoticeTableBody", "jwc_notice", 5);
         populateTable("compNoticeTableBody", "comp_notice", 5);
         populateCourseTable();
 
+        const tabs = document.querySelectorAll('.tab');
+        const tables = document.querySelectorAll('table');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tables.forEach(table => {
+                    table.style.display = 'none';
+                });
+
+                tabs.forEach(t => {
+                    t.classList.remove('active');
+                });
+
+                const tableId = tab.getAttribute('data-table');
+                const tableToDisplay = document.getElementById(tableId);
+
+                if (tableToDisplay) {
+                    tableToDisplay.style.display = 'table';
+                    tab.classList.add('active');
+                }
+            });
+        });
     </script>
 </body>
 </html>

@@ -22,7 +22,7 @@ session.headers = {
 def get_current_day():
     today = datetime.now().date()
     day_week = today.weekday()
-    return f"今天是 {today} 星期 {'一二三四五六日'[day_week]}"
+    return f"今天是{today} 星期{'一二三四五六日'[day_week]}"
 
 
 @app.route('/jwc_notice/<int:num_of_notice>')
