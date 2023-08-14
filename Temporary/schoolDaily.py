@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 from schoolDaily_des_util import raw_str_enc
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 
 app = Flask(__name__)
 
@@ -167,6 +167,11 @@ def get_course_info():
         })
 
     return jsonify(courses)
+
+
+@app.route('/')
+def index():
+    return render_template('schoolDaily_frontend.html')
 
 
 if __name__ == '__main__':
