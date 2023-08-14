@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>阅读打卡</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f3f3;
+        }
+        h1 {
+            text-align: center;
+            padding: 20px;
+            background-color: #007bff;
+            color: #ffffff;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="file"] {
+            width: 70%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>每日阅读打卡</h1>
+    <form method="post" enctype="multipart/form-data">
+        <label for="name">姓名：</label>
+        <input type="text" id="name" name="name" required><br><br>
+        <label for="book">书目：</label>
+        <input type="text" id="book" name="book" required><br><br>
+        <label for="duration">阅读时长（分钟）：</label>
+        <input type="number" id="duration" name="duration" min="1" required><br><br>
+        <label for="image">上传图片：</label>
+        <input type="file" id="image" name="image" accept="image/*" required><br><br>
+        <input type="submit" value="提交">
+    </form>
+</body>
+</html>
