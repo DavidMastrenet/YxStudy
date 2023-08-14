@@ -115,9 +115,8 @@
     </table>
 
     <script>
-        const server = "http://127.0.0.1:5000/";
         const dateElement = document.getElementById('date');
-        fetch(server + "current_day")
+        fetch("current_day")
             .then(response => {
                 return response.text();
             })
@@ -126,7 +125,7 @@
             })
 
         async function fetchData(link, rows) {
-            const response = await fetch(server + link + "/" + rows);
+            const response = await fetch(link + "/" + rows);
             return await response.json();
         }
 
@@ -149,7 +148,7 @@
         }
 
         async function fetchCourseData() {
-            const response = await fetch(server + "course_info");
+            const response = await fetch("course_info");
             return await response.json();
         }
 

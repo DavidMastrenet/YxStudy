@@ -166,6 +166,13 @@ def get_course_info():
             "info": info
         })
 
+    if str(courses) == "[]":
+        courses.append({
+            "id": "错误",
+            "course_name": "无法获取课程信息",
+            "info": "请检查学号、密码及班级名称是否正确"
+        })
+
     return jsonify(courses)
 
 
