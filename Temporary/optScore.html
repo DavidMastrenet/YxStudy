@@ -90,12 +90,15 @@
         </div>
 
         <div class="input-group">
-            <label class="input-label" for="gradeLevel">所在档位（1~4）：</label>
+            <label class="input-label" for="gradeLevel">所在档位（1~5）：</label>
             <input class="input-field" type="number" id="gradeLevel">
         </div>
 
         <button onclick="calculateExamScore()">开始转换</button>
         <p id="result"></p>
+
+        <footer style="text-align:center">项目来源：yhj  WEB开发：hyx</footer>
+        <p style="text-align:center"><a href="https://beian.miit.gov.cn/">闽ICP备2021002500号-1</a></p>
     </div>
 
     <script>
@@ -111,13 +114,13 @@
                 return;
             }
 
-            if (gradeLevel < 1 || gradeLevel > 4 || !Number.isInteger(gradeLevel)) {
+            if (gradeLevel < 1 || gradeLevel > 5 || !Number.isInteger(gradeLevel)) {
                 resultElement.textContent = "请输入有效的等级。";
                 return;
             }
 
             if (lowestScore < examScore && examScore < highestScore) {
-                const scoreMap = { 1: { d: 100, f: 86 }, 2: { d: 85, f: 71 }, 3: { d: 70, f: 56 }, 4: { d: 55, f: 41 } };
+                const scoreMap = { 1: { d: 100, f: 86 }, 2: { d: 85, f: 71 }, 3: { d: 70, f: 56 }, 4: { d: 55, f: 41 }, 5: { d: 41, f: 30 }};
                 const scoreD = scoreMap[gradeLevel].d;
                 const scoreF = scoreMap[gradeLevel].f;
                 const scoreG = highestScore - examScore;
