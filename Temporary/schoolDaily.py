@@ -7,9 +7,8 @@ from bs4 import BeautifulSoup
 
 from schoolDaily_des_util import raw_str_enc
 
-from flask import Flask, jsonify, render_template
-
-app = Flask(__name__)
+from flask import Flask, jsonify, render_template, redirect, url_for, request
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 session = requests.session()
 session.headers = {
@@ -17,8 +16,54 @@ session.headers = {
                   "Chrome/91.0.4472.124 Safari/537.36",
 }
 
+app = Flask(__name__)
+app.secret_key = 'test_key'
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+class User(UserMixin):
+    def __init__(self, id):
+        self.id = id
+
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        global username, password
+        username = request.form['user_id']
+        password = request.form['password']
+        cas_login(username, password)
+        get_course_info()
+        if login_status == 0:
+            return render_template('login.html', message="登录失败")
+        else:
+            user = User(username)
+            login_user(user)
+            return redirect(url_for('index'))
+    return render_template('login.html')
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User(user_id)
+
+
+@login_manager.unauthorized_handler
+def unauthorized():
+    return redirect(url_for('login'))
+
 
 @app.route('/current_day')
+@login_required
 def get_current_day():
     today = datetime.now().date()
     day_week = today.weekday()
@@ -26,6 +71,7 @@ def get_current_day():
 
 
 @app.route('/jwc_notice/<int:num_of_notice>')
+@login_required
 def get_jwc_notice(num_of_notice):
     url = "https://jwc.shnu.edu.cn/"
     response = requests.get(url)
@@ -55,6 +101,7 @@ def get_jwc_notice(num_of_notice):
 
 
 @app.route('/comp_notice/<int:num_of_notice>')
+@login_required
 def get_comp_notice(num_of_notice):
     url = "http://xxjd.shnu.edu.cn/27065/list.htm"
     response = requests.get(url)
@@ -76,17 +123,24 @@ def get_comp_notice(num_of_notice):
     return jsonify(notices)
 
 
-def cas_login(username, password):
+def cas_login(usr, pwd):
     login_url = "https://cas.shnu.edu.cn/cas/login?service=http%3A%2F%2Fcourse.shnu.edu.cn%2Feams%2Flogin.action"
     response = session.get(login_url)
-    soup = BeautifulSoup(response.text, "html.parser")
-    lt_value = soup.find("input", {"id": "lt"})["value"]
+    if 'id="lt"' in response.text:
+        soup = BeautifulSoup(response.text, "html.parser")
+        lt_value = soup.find("input", {"id": "lt"})["value"]
+    else:
+        lt_value = ''
+    if 'name="execution"' in response.text:
+        execution = soup.find("input", {"name": "execution"})["value"]
+    else:
+        execution = "e1s1"
     data = {
-        "rsa": raw_str_enc(username + password + lt_value),
-        "ul": len(username),
-        "pl": len(password),
+        "rsa": raw_str_enc(usr + pwd + lt_value),
+        "ul": len(usr),
+        "pl": len(pwd),
         "lt": lt_value,
-        "execution": soup.find("input", {"name": "execution"})["value"],
+        "execution": execution,
         "_eventId": "submit",
     }
     post_headers = {
@@ -109,6 +163,7 @@ def cas_login(username, password):
 
 @app.route('/course_info')
 def get_course_info():
+    global login_status
     search_url = "https://course.shnu.edu.cn/eams/stdSyllabus!search.action"
     search_headers = {
         "accept": "*/*",
@@ -172,17 +227,18 @@ def get_course_info():
             "course_name": "无法获取课程信息",
             "info": "请检查学号、密码及班级名称是否正确"
         })
+        login_status = 0
+    else:
+        login_status = 1
 
     return jsonify(courses)
 
 
 @app.route('/')
+@login_required
 def index():
-    return render_template('schoolDaily_frontend.html')
+    return render_template('schoolDaily_frontend.html', username=current_user.id)
 
 
 if __name__ == '__main__':
-    usr = ""
-    pwd = ""
-    cas_login(usr, pwd)
     app.run(debug=True)

@@ -70,6 +70,20 @@
         .tab.active {
             background-color: #ddd;
         }
+
+            .logout-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #FF5733;
+        color: #FFFFFF;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+
+    .logout-button:hover {
+        background-color: #FF874E;
+    }
     </style>
 </head>
 <body>
@@ -79,7 +93,9 @@
             <div class="tab" data-table="compTable">学院通知</div>
             <div class="tab" data-table="courseTable">课程信息</div>
         </div>
+        学号：{{ username }}
         <div id="date"></div>
+        <a href="logout" class="logout-button">退出登录</a>
     </div>
     <table id="jwcTable">
         <thead>
@@ -113,6 +129,9 @@
         </thead>
         <tbody id="courseTableBody"></tbody>
     </table>
+
+    <footer style="text-align: center">开发：DavidMastrenet</footer>
+    <footer style="text-align: center">课程信息在某些情况下可能无法显示。</footer>
 
     <script>
         const dateElement = document.getElementById('date');
