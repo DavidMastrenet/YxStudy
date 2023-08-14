@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日常助手</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 20px;
+            margin: 10px 0;
+            color: #333;
+            text-transform: uppercase;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            text-align: center;
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        td:nth-child(1) {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="date"></h1>
+    <h1>教务处通知</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>日期</th>
+                <th>标题</th>
+            </tr>
+        </thead>
+        <tbody id="jwcNoticeTableBody"></tbody>
+    </table>
+
+    <h1>学院通知</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>日期</th>
+                <th>标题</th>
+            </tr>
+        </thead>
+        <tbody id="compNoticeTableBody"></tbody>
+    </table>
+
+    <h1>课程信息</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>序号</th>
+                <th>课程名称</th>
+                <th>授课信息</th>
+            </tr>
+        </thead>
+        <tbody id="courseTableBody"></tbody>
+    </table>
+
+    <script>
+        const server = "http://127.0.0.1:5000/";
+        const dateElement = document.getElementById('date');
+        fetch(server + "current_day")
+            .then(response => {
+                return response.text();
+            })
+            .then(data => {
+                dateElement.innerText = data;
+            })
+
+        async function fetchData(link, rows) {
+            const response = await fetch(server + link + "/" + rows);
+            return await response.json();
+        }
+
+        async function populateTable(table, link, rows) {
+            const tableBody = document.getElementById(table);
+            const noticeData = await fetchData(link, rows);
+
+            if (Array.isArray(noticeData)) {
+                noticeData.forEach((item) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${item.id}</td>
+                        <td>${item.date}</td>
+                        <td>${item.title}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+        }
+
+        async function fetchCourseData() {
+            const response = await fetch(server + "course_info");
+            return await response.json();
+        }
+
+        async function populateCourseTable() {
+            const tableBody = document.getElementById("courseTableBody");
+            const noticeData = await fetchCourseData();
+
+            if (Array.isArray(noticeData)) {
+                noticeData.forEach((item) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${item.id}</td>
+                        <td>${item.course_name}</td>
+                        <td>${item.info}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+        }
+
+        populateTable("jwcNoticeTableBody", "jwc_notice", 5);
+        populateTable("compNoticeTableBody", "comp_notice", 5);
+        populateCourseTable();
+
+    </script>
+</body>
+</html>
