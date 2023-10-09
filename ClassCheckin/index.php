@@ -10,7 +10,9 @@
         }
 
         h1 {
-            color: #333;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 20px;
         }
 
         form {
@@ -74,6 +76,20 @@
                 padding: 10px; /* 在小屏幕上减小表单内边距 */
             }
         }
+        
+        button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
     </style>
     <script>
         window.onload = getLocation;
@@ -117,6 +133,7 @@
         <input type="hidden" id="latitude" name="latitude">
         <input type="hidden" id="longitude" name="longitude">
         <input type="submit" value="打卡">
+        <button onclick="location.href='backend.php'">后台管理</button>
     </form>
     <!-- 底部声明 -->
     <div class="footer">平台开发：hyx<br>2023.10<br>温馨提示：有用户特征记录，请勿帮他人打卡</div>

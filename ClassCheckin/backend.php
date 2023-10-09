@@ -41,12 +41,19 @@ if (!isset($_SESSION['user'])) {
             font-size: 12px;
             color: #888;
         }
+
+        h1 {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
     <h1>后台 - 计师2班打卡</h1>
     <button onclick="location.href='add.php'">添加任务</button>
     <button onclick="location.href='view.php'">查看记录</button>
+    <button onclick="location.href='index.php'">返回首页</button>
     <div class="footer">平台开发：hyx<br>2023.10</div>
 </body>
 </html>

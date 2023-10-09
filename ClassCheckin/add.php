@@ -19,6 +19,12 @@ if (!isset($_SESSION['user'])) {
             padding: 0;
         }
 
+        h1 {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 20px;
+        }
+
         h2 {
             color: #333;
         }
@@ -64,10 +70,11 @@ if (!isset($_SESSION['user'])) {
     </style>
 </head>
 <body>
-    <h2>添加打卡任务</h2>
+    <h1>后台 - 计师2班打卡</h1>
     <form action="add_task.php" method="post">
+        格式：日期+课程（如10.9历史）<br><br>
         任务名称：<input type="text" name="task_name" required><br>
-        时间限制（分钟）：<input type="number" name="ddl" required><br>
+        时间限制（分钟）：<input type="number" name="ddl" min="1" step="1" required><br>
         <input type="submit" value="添加任务">
     </form>
     <br>

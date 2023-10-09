@@ -1,3 +1,14 @@
+<!DOCTYPE html>
+<head>
+  <style>
+    h2 {
+      color: red;
+      font-size: 70px;
+    }
+  </style>
+</head>
+</html>
+
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $selected_task = $_POST["selected_task"];
@@ -75,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     } else {
         $location_mod = "未收到经度和纬度信息";
-    }    
+    }
 
     // 获取任务截止时间
     $task_deadline = file_get_contents("tasks/$selected_task.txt");
@@ -83,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // 检查是否超过任务截止时间
     if ($current_time > $task_deadline) {
-        echo "任务已经过期，无法打卡！";
+        echo "<h2>任务已经过期，无法打卡！</h2>";
         exit;
     }
 
@@ -97,12 +108,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // 保存打卡记录到任务文件
     file_put_contents($record_filename, $record_data, FILE_APPEND);
-    echo "打卡成功！";
+    
+    session_start();
+    $_SESSION['checkuser'] = $username;
+    $_SESSION['selected_task'] = $selected_task;
+    
+    header("Location: success.php");
 }
 
 function isUserValid($username) {
     $users = file("user.list", FILE_IGNORE_NEW_LINES);
     return in_array($username, $users);
 }
-
 ?>

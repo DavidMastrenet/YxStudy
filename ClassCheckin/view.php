@@ -5,6 +5,7 @@ if (!isset($_SESSION['user'])) {
     exit;
 }
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -72,8 +73,7 @@ if (!isset($_SESSION['user'])) {
     </style>
 </head>
 <body>
-    <h1>计师2班打卡</h1>
-
+    <h1>后台 - 计师2班打卡</h1>
     <form action="view.php" method="post">
         <select name="selected_task">
             <?php
@@ -88,7 +88,6 @@ if (!isset($_SESSION['user'])) {
     </form>
     <button onclick="location.href='backend.php'">返回</button>
     <div class="footer">平台开发：hyx<br>2023.10</div>
-
     <?php
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $selected_task = $_POST["selected_task"];

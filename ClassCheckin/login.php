@@ -17,11 +17,9 @@ if (isset($_POST['login'])) {
 
     $error = "用户名或密码不正确";
 }
-
 ?>
 
 <!DOCTYPE html>
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -101,14 +99,12 @@ if (isset($_POST['login'])) {
         font-size: 12px;
         color: #888;
     }
-
   </style>
 </head>
 
 <body>
   <div id="login_box">
     <h2>登录</h2>
-    
     <form method="POST">
         <div class="input_box">
             <input type="text" class="input-item" id="username" name="username" placeholder="用户名" required>
