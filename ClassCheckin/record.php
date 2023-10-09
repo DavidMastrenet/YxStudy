@@ -53,9 +53,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $ret += (150.0 * sin($x / 12.0 * M_PI) + 300.0 * sin($x / 30.0 * M_PI)) * 2.0 / 3.0;
         return $ret;
     }
-    
-
-    
 
     if (isset($_POST["latitude"]) && isset($_POST["longitude"])) {
         // 获取经度和纬度
@@ -78,9 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     } else {
         $location_mod = "未收到经度和纬度信息";
-    }
-
-    
+    }    
 
     // 获取任务截止时间
     $task_deadline = file_get_contents("tasks/$selected_task.txt");

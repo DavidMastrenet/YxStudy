@@ -1,4 +1,10 @@
 <?php
+session_start();
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit;
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $task_name = $_POST["task_name"];
     $task_deadline = time() + $_POST["ddl"]*60;

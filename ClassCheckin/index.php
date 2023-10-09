@@ -76,6 +76,7 @@
         }
     </style>
     <script>
+        window.onload = getLocation;
         function getLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(showPosition);
@@ -115,10 +116,9 @@
         <!-- 用于存储地理位置信息 -->
         <input type="hidden" id="latitude" name="latitude">
         <input type="hidden" id="longitude" name="longitude">
-        <input type="button" value="获取地理位置" onclick="getLocation()">
-        <input type="submit" value="打卡（务必先获取位置）">
+        <input type="submit" value="打卡">
     </form>
     <!-- 底部声明 -->
-    <div class="footer">平台开发：hyx <br>温馨提示：有用户特征记录，请勿帮他人打卡</div>
+    <div class="footer">平台开发：hyx<br>2023.10<br>温馨提示：有用户特征记录，请勿帮他人打卡</div>
 </body>
 </html>
